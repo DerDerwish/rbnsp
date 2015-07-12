@@ -1,6 +1,7 @@
 require 'uri'
 require 'net/http'
 require 'json'
+require 'time'
 
 class Hackerspace
 	attr_reader		:uri
@@ -13,7 +14,8 @@ class Hackerspace
 	def status
 		res = Net::HTTP.get_response(@uri)
 		return 'unknown' unless res.code == "200"
-		return JSON.parse(res.body)["open"] ? 'open' : 'closed'
+		data = JSON.parse(res.body)
+		return (data["open"] ? 'open' : 'closed') << ' since ' << Time.at(data["lastchange"]).to_s
 	end
 
 end
